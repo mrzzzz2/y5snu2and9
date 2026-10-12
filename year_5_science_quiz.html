@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五年级科学互动闯关游戏：人体的奥秘与月相</title>
+    <!-- Tailwind CSS for mobile-first responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+        }
+        .custom-shadow {
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 8px 10px -6px rgba(59, 130, 246, 0.1);
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen">
+
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md p-4 text-center sticky top-0 z-50">
+        <div class="max-w-md mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-atom text-2xl animate-spin" style="animation-duration: 8s;"></i>
+                <h1 class="text-lg font-bold tracking-wide">五年级科学互动乐园</h1>
+            </div>
+            <div id="user-badge" class="hidden text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">
+                <i class="fa-solid fa-user-graduate mr-1"></i><span id="badge-name"></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-3 sm:p-6">
+        <div class="w-full max-w-md bg-white rounded-3xl custom-shadow p-6 sm:p-8 transition-all duration-300">
+            
+            <!-- VIEW 1: LOGIN / REGISTRATION FORM -->
+            <section id="view-login" class="space-y-6">
+                <div class="text-center space-y-2">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl text-2xl mb-2 shadow-inner">
+                        <i class="fa-solid fa-rocket"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-900">欢迎来到科学挑战赛！</h2>
+                    <p class="text-sm text-slate-500">请填写您的姓名与班级，开启人多与宇宙的探索之旅。</p>
+                </div>
+
+                <form id="login-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">学生姓名</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                <i class="fa-solid fa-user"></i>
+                            </span>
+                            <input type="text" id="input-name" required placeholder="例如：陈小明" 
+                                class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-sm transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">班级</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                <i class="fa-solid fa-school"></i>
+                            </span>
+                            <input type="text" id="input-class" required placeholder="例如：5 蓝班 / 5A" 
+                                class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-sm transition">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transform active:scale-98 transition flex items-center justify-center space-x-2">
+                        <span>开始挑战</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <!-- Cloud Sync Status Indicator -->
+                <div id="sync-status" class="text-center text-xs text-slate-400 pt-2 flex items-center justify-center space-x-1">
+                    <i class="fa-solid fa-cloud text-blue-400"></i>
+                    <span>排行榜与成绩数据已同步至云端</span>
+                </div>
+            </section>
+
+            <section id="view-quiz" class="hidden space-y-6">
+                <!-- Quiz Header Progress -->
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <span id="question-progress" class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider">第 1 题 / 共 15 题</span>
+                    <div class="flex items-center space-x-1 text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                        <i class="fa-solid fa-clock text-amber-500"></i>
+                        <span id="timer-display">00:00</span>
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="space-y-4">
+                    <div id="question-category" class="inline-block text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-md"></div>
+                    <h3 id="question-text" class="text-base sm:text-lg font-bold text-slate-800 leading-snug"></h3>
+                    <div id="question-image-container" class="hidden rounded-xl overflow-hidden bg-slate-50 border border-slate-100 p-2 text-center">
+                        <img id="question-image" src="" alt="题目配图" class="mx-auto max-h-48 object-contain rounded-lg">
+                    </div>
+                </div>
+
+                <!-- Options List -->
+                <div id="options-container" class="space-y-3">
+                    <!-- Dynamically populated options -->
+                </div>
+
+                <!-- Next Button -->
+                <div class="pt-2">
+                    <button id="btn-next" onclick="nextQuestion()" class="w-full py-3.5 bg-slate-900 text-white font-semibold rounded-xl shadow-md hover:bg-slate-800 transition hidden flex items-center justify-center space-x-2">
+                        <span>下一题</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <section id="view-result" class="hidden space-y-6 text-center">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-emerald-100 text-emerald-600 rounded-3xl text-3xl mb-1 shadow-inner animate-bounce">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                
+                <div class="space-y-1">
+                    <h2 class="text-2xl font-bold text-slate-900">闯关成功！</h2>
+                    <p class="text-xs text-slate-500" id="result-user-info"></p>
+                </div>
+
+                <div class="bg-gradient-to-br from-slate-50 to-blue-50/50 rounded-2xl p-6 border border-slate-100 grid grid-cols-2 gap-4 text-center">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                        <span class="block text-xs text-slate-400 font-medium mb-1">最终得分</span>
+                        <span id="final-score" class="text-3xl font-extrabold text-blue-600">0</span>
+                        <span class="text-xs text-slate-500"> / 100分</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                        <span class="block text-xs text-slate-400 font-medium mb-1">所用时间</span>
+                        <span id="final-time" class="text-2xl font-extrabold text-indigo-600">00:00</span>
+                    </div>
+                </div>
+
+                <!-- Leaderboard / Global Records Section -->
+                <div class="space-y-3 text-left">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                            <i class="fa-solid fa-trophy text-amber-500 mr-1"></i> 全球英雄榜 (云端实时)
+                        </h4>
+                        <span class="text-[10px] text-slate-400">实时跨设备同步</span>
+                    </div>
+                    <div id="leaderboard-list" class="bg-slate-50 rounded-xl p-3 max-h-40 overflow-y-auto space-y-2 border border-slate-100 text-xs">
+                        <!-- Leaderboard items populated here -->
+                        <div class="text-center text-slate-400 py-4">正在加载排行榜...</div>
+                    </div>
+                </div>
+
+                <button onclick="restartQuiz()" class="w-full py-3.5 bg-blue-600 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 hover:bg-blue-700 transition">
+                    <i class="fa-solid fa-rotate-right mr-1"></i> 重新挑战
+                </button>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="py-4 text-center text-xs text-slate-500">
+        <p>五年级科学网课练习 · 人体骨骼系统与月相星座</p>
+    </footer>
+
+    <!-- Custom Notification Modal (Replacing alert/confirm) -->
+    <div id="custom-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-xs w-full p-6 text-center space-y-4 shadow-2xl animate-scaleIn">
+            <div id="modal-icon" class="text-3xl text-amber-500">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <h3 id="modal-title" class="text-base font-bold text-slate-900">提示</h3>
+            <p id="modal-message" class="text-sm text-slate-600"></p>
+            <button onclick="closeModal()" class="w-full py-2.5 bg-blue-600 text-white rounded-xl font-medium text-sm hover:bg-blue-700 transition">确定</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Global Environment Variables
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'year5-science-quiz-app';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyDummyKeyForLocalTesting",
+            authDomain: "dummy-app.firebaseapp.com",
+            projectId: "dummy-app",
+            storageBucket: "dummy-app.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef"
+        };
+
+        let db, auth, currentUser = null;
+
+        // Initialize Firebase safely
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            const initAuth = async () => {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    currentUser = auth.currentUser;
+                    loadLeaderboard();
+                } catch (e) {
+                    console.error("Firebase Auth Error:", e);
+                }
+            };
+            initAuth();
+        } catch (e) {
+            console.warn("Firebase initialization skipped or running offline mode:", e);
+        }
+
+        // Quiz Questions Database based on provided PDFs
+        const questions = [
+            // Chapter: Human Skeletal System
+            {
+                category: "人体的骨骼系统",
+                text: "人类的骨骼系统由多少块不同形状和大小的骨头所组成？",
+                options: ["106块", "206块", "365块", "500块"],
+                correct: 1
+            },
+            {
+                category: "人体的骨骼系统",
+                text: "哪个主要骨骼负责保护脑部，并形成脸部支架？",
+                options: ["肋骨", "脊柱", "头骨", "手部骨骼"],
+                correct: 2
+            },
+            {
+                category: "人体的骨骼系统",
+                text: "肋骨对人体有什么主要功能？",
+                options: ["支撑整个身体重量", "保护肺、肝、心脏等内脏", "让我们能进行各项手部活动", "形成腿部支架"],
+                correct: 1
+            },
+            {
+                category: "人体的骨骼系统",
+                text: "下列哪个部位的关节使我们在行走、跑步和蹲下时能伸直和弯曲身体？",
+                options: ["肩膀", "手肘", "膝盖", "手腕"],
+                correct: 2
+            },
+            {
+                category: "人体的骨骼系统",
+                text: "关节表面覆盖了一层软骨，它的主要作用是什么？",
+                options: ["制造血液", "减少活动时骨头之间的摩擦", "增加骨骼重量", "帮助消化食物"],
+                correct: 1
+            },
+            {
+                category: "人体的骨骼系统",
+                text: "如果人类没有了骨骼系统，将会产生什么后果？",
+                options: ["身体无法保持直立，无法支撑整个身体", "血液循环会加快", "呼吸会变得更顺畅", "视力会变得更好"],
+                correct: 0
+            },
+            // Chapter: Blood Circulation System
+            {
+                category: "人体的血液循环系统",
+                text: "人体的血液循环系统主要包括心脏、血管、血液以及运作时涉及的哪个器官？",
+                options: ["胃", "肺", "肾脏", "大肠"],
+                correct: 1
+            },
+            {
+                category: "人体的血液循环系统",
+                text: "心脏在血液循环系统中的主要功能是什么？",
+                options: ["把血液推送到肺和全身", "制造氧气", "消化营养素", "过滤体内的排泄物"],
+                correct: 0
+            },
+            {
+                category: "人体的血液循环系统",
+                text: "血液把什么重要物质输送到全身，以维持生命过程？",
+                options: ["二氧化碳", "氧气和营养素", "酒精", "废气"],
+                correct: 1
+            },
+            // Chapter: Moon Phases & Constellations
+            {
+                category: "月相和星座",
+                text: "为什么月球本身不是光源？",
+                options: ["月球发出的光不够光亮", "月球不会发光，它只反射太阳的光", "月球只有在白天才会发光", "月球只有在夜晚才会发光"],
+                correct: 1
+            },
+            {
+                category: "月相和星座",
+                text: "月球绕着地球公转，同时也在沿着什么方向自转和公转？",
+                options: ["由东向西", "由西向东", "由北向南", "由南向北"],
+                correct: 1
+            },
+            {
+                category: "月相和星座",
+                text: "当月球位于地球与太阳之间，黑面朝向地球，我们在地球上看不见月球时，这是什么月相？",
+                options: ["满月", "新月（初一）", "上弦月", "下弦月"],
+                correct: 1
+            },
+            {
+                category: "月相和星座",
+                text: "农历十五至十六夜晚，当月球的亮面完全朝向地球时，会出现什么月相？",
+                options: ["新月", "娥眉月", "满月", "下弦月"],
+                correct: 2
+            },
+            {
+                category: "月相和星座",
+                text: "月球公转一周和自转一周所需的时间大约是多少？",
+                options: ["24小时", "大约27天", "365天", "30天"],
+                correct: 1
+            },
+            {
+                category: "月相和星座",
+                text: "下列哪个星座能帮助人们确认冬季的到来？",
+                options: ["北斗七星", "猎户座", "天蝎座", "大熊座"],
+                correct: 1
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedAnswers = new Array(questions.length).fill(null);
+        let startTime = 0;
+        let timerInterval = null;
+        let elapsedTimeSeconds = 0;
+        let studentName = "";
+        let studentClass = "";
+
+        // DOM Elements
+        const viewLogin = document.getElementById('view-login');
+        const viewQuiz = document.getElementById('view-quiz');
+        const viewResult = document.getElementById('view-result');
+        const loginForm = document.getElementById('login-form');
+        const userBadge = document.getElementById('user-badge');
+        const badgeName = document.getElementById('badge-name');
+        const questionProgress = document.getElementById('question-progress');
+        const timerDisplay = document.getElementById('timer-display');
+        const questionCategory = document.getElementById('question-category');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const btnNext = document.getElementById('btn-next');
+        const finalScore = document.getElementById('final-score');
+        const finalTime = document.getElementById('final-time');
+        const resultUserInfo = document.getElementById('result-user-info');
+        const leaderboardList = document.getElementById('leaderboard-list');
+
+        // Modal Handler
+        window.showModal = function(title, message) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        window.closeModal = function() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // Handle Login Submission
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            studentName = document.getElementById('input-name').value.trim();
+            studentClass = document.getElementById('input-class').value.trim();
+
+            if (!studentName || !studentClass) {
+                showModal('填写提示', '请完整填写姓名和班级！');
+                return;
+            }
+
+            badgeName.innerText = `${studentName} (${studentClass})`;
+            userBadge.classList.remove('hidden');
+
+            viewLogin.classList.add('hidden');
+            viewQuiz.classList.remove('hidden');
+
+            startQuizSession();
+        });
+
+        function startQuizSession() {
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedAnswers.fill(null);
+            elapsedTimeSeconds = 0;
+            startTime = Date.now();
+
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                elapsedTimeSeconds = Math.floor((Date.now() - startTime) / 1000);
+                const mins = String(Math.floor(elapsedTimeSeconds / 60)).padStart(2, '0');
+                const secs = String(elapsedTimeSeconds % 60).padStart(2, '0');
+                timerDisplay.innerText = `${mins}:${secs}`;
+            }, 1000);
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestionIndex];
+            questionProgress.innerText = `第 ${currentQuestionIndex + 1} 题 / 共 ${questions.length} 题`;
+            questionCategory.innerText = q.category;
+            questionText.innerText = q.text;
+
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-4 rounded-xl border border-slate-200 bg-white hover:bg-blue-50/50 hover:border-blue-300 transition text-sm font-medium flex items-center justify-between group`;
+                
+                const isSelected = selectedAnswers[currentQuestionIndex] === idx;
+                if (isSelected) {
+                    btn.classList.add('border-blue-500', 'bg-blue-50', 'text-blue-700');
+                }
+
+                btn.innerHTML = `
+                    <span class="flex items-center space-x-3">
+                        <span class="w-7 h-7 rounded-lg bg-slate-100 group-hover:bg-blue-200 text-slate-600 group-hover:text-blue-700 flex items-center justify-center text-xs font-bold transition">${String.fromCharCode(65 + idx)}</span>
+                        <span>${opt}</span>
+                    </span>
+                    <i class="fa-solid fa-circle-check ${isSelected ? 'text-blue-600' : 'text-transparent'}"></i>
+                `;
+
+                btn.onclick = () => selectOption(idx);
+                optionsContainer.appendChild(btn);
+            });
+
+            if (selectedAnswers[currentQuestionIndex] !== null) {
+                btnNext.classList.remove('hidden');
+            } else {
+                btnNext.classList.add('hidden');
+            }
+        }
+
+        window.selectOption = function(optionIndex) {
+            selectedAnswers[currentQuestionIndex] = optionIndex;
+            
+            // Highlight chosen
+            const buttons = optionsContainer.children;
+            for (let i = 0; i < buttons.length; i++) {
+                if (i === optionIndex) {
+                    buttons[i].className = 'w-full text-left p-4 rounded-xl border border-blue-500 bg-blue-50 text-blue-700 text-sm font-medium flex items-center justify-between transition';
+                    buttons[i].querySelector('i').classList.remove('text-transparent');
+                    buttons[i].querySelector('i').classList.add('text-blue-600');
+                } else {
+                    buttons[i].className = 'w-full text-left p-4 rounded-xl border border-slate-200 bg-white hover:bg-blue-50/50 hover:border-blue-300 transition text-sm font-medium flex items-center justify-between group';
+                    buttons[i].querySelector('i').classList.add('text-transparent');
+                }
+            }
+
+            btnNext.classList.remove('hidden');
+        }
+
+        window.nextQuestion = function() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            clearInterval(timerInterval);
+
+            // Calculate score
+            score = 0;
+            questions.forEach((q, idx) => {
+                if (selectedAnswers[idx] === q.correct) {
+                    score += Math.round(100 / questions.length);
+                }
+            });
+            if (score > 100) score = 100;
+
+            const mins = Math.floor(elapsedTimeSeconds / 60);
+            const secs = elapsedTimeSeconds % 60;
+            const timeStr = `${mins > 0 ? mins + '分' : ''}${secs}秒`;
+
+            finalScore.innerText = score;
+            finalTime.innerText = timeStr;
+            resultUserInfo.innerText = `${studentName} (${studentClass})`;
+
+            viewQuiz.classList.add('hidden');
+            viewResult.classList.remove('hidden');
+
+            saveScoreToCloud(studentName, studentClass, score, timeStr, elapsedTimeSeconds);
+        }
+
+        async function saveScoreToCloud(name, studentClass, score, timeStr, totalSeconds) {
+            if (!db) return;
+            try {
+                const resultsCol = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
+                await addDoc(resultsCol, {
+                    name: name,
+                    studentClass: studentClass,
+                    score: score,
+                    timeStr: timeStr,
+                    totalSeconds: totalSeconds,
+                    timestamp: Date.now()
+                });
+            } catch (e) {
+                console.error("Error saving score to cloud:", e);
+            }
+        }
+
+        function loadLeaderboard() {
+            if (!db) {
+                leaderboardList.innerHTML = `<div class="text-center text-slate-400 py-3">本地离线模式（成绩仅在本地展示）</div>`;
+                return;
+            }
+
+            try {
+                const leaderboardCol = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
+                // Following strict rules: simple query, sort in JS memory
+                onSnapshot(leaderboardCol, (snapshot) => {
+                    let records = [];
+                    snapshot.forEach(doc => {
+                        records.push(doc.data());
+                    });
+
+                    // Sort by highest score first, then lowest time
+                    records.sort((a, b) => {
+                        if (b.score !== a.score) return b.score - a.score;
+                        return a.totalSeconds - b.totalSeconds;
+                    });
+
+                    if (records.length === 0) {
+                        leaderboardList.innerHTML = `<div class="text-center text-slate-400 py-3">暂无排行榜数据，快来抢头名！</div>`;
+                        return;
+                    }
+
+                    let html = '';
+                    records.slice(0, 10).forEach((rec, index) => {
+                        const rankBadge = index === 0 ? 'bg-amber-100 text-amber-700 border-amber-300' :
+                                          index === 1 ? 'bg-slate-200 text-slate-700 border-slate-300' :
+                                          index === 2 ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200';
+                        
+                        html += `
+                            <div class="flex items-center justify-between bg-white p-2.5 rounded-lg border border-slate-100 shadow-sm">
+                                <div class="flex items-center space-x-2">
+                                    <span class="w-5 h-5 rounded-full border ${rankBadge} flex items-center justify-center font-bold text-[10px]">${index + 1}</span>
+                                    <div>
+                                        <span class="font-semibold text-slate-800">${escapeHtml(rec.name)}</span>
+                                        <span class="text-[10px] text-slate-400 ml-1">(${escapeHtml(rec.studentClass)})</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="font-bold text-blue-600">${rec.score}分</span>
+                                    <span class="text-[10px] text-slate-400 ml-1">${rec.timeStr}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    leaderboardList.innerHTML = html;
+                }, (error) => {
+                    console.error("Leaderboard snapshot error:", error);
+                    leaderboardList.innerHTML = `<div class="text-center text-red-400 py-3">加载排行榜出错</div>`;
+                });
+            } catch (e) {
+                console.error("Leaderboard load exception:", e);
+            }
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        window.restartQuiz = function() {
+            viewResult.classList.add('hidden');
+            viewLogin.classList.remove('hidden');
+            document.getElementById('input-name').value = '';
+            document.getElementById('input-class').value = '';
+            userBadge.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
