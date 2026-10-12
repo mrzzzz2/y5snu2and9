@@ -498,22 +498,26 @@
             saveScoreToCloud(studentName, studentClass, score, timeStr, elapsedTimeSeconds);
         }
 
-        async function saveScoreToCloud(name, studentClass, score, timeStr, totalSeconds) {
-            if (!db) return;
-            try {
-                const resultsCol = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
-                await addDoc(resultsCol, {
-                    name: name,
-                    studentClass: studentClass,
-                    score: score,
-                    timeStr: timeStr,
-                    totalSeconds: totalSeconds,
-                    timestamp: Date.now()
-                });
-            } catch (e) {
-                console.error("Error saving score to cloud:", e);
-            }
-        }
+       async function saveScoreToGoogleSheets(name, studentClass, score, timeStr) {
+    const GOOGLE_SCRIPT_URL = "将你刚刚复制的Google Web App URL粘贴到这里";
+    
+    try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors", // 跨域提交配置
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: name,
+                studentClass: studentClass,
+                score: score,
+                timeStr: timeStr
+            })
+        });
+        console.log("成绩已成功同步至 Google Sheets！");
+    } catch (error) {
+        console.error("同步失败:", error);
+    }
+}
 
         function loadLeaderboard() {
             if (!db) {
